@@ -1,0 +1,116 @@
+## Tensor Manipulation 1
+### Vector Matrix Tensor
+1차원 - 2차원 - 3차원 ...
+
+### Pytorch Tensor Shape Convention
+- 2D Tensor의 크기
+
+|t| = (batch size, dimension)
+
+- 3D Tensor의 크기
+- 
+Vision data
+
+|t| = (batch size, width, height)
+
+Sequential data
+
+|t| = (batch size, length, dim)
+
+### Numpy
+```
+import numpy as np
+import pytorch
+```
+#### 1D Array
+```
+t = np.array([1, 2, 3, 4])
+
+t.ndim # rank of t: 1
+t.shape # shape of t: (7,)
+
+t[0] t[1] t[-1] # indexing: 1, 2, 4
+t[1:-1] # slicing: 1, 2, 3 (a:b는 a 이상 b 미만을 의미)
+t[1:] t[:3] # 2,3,4 1,2 
+```
+
+#### 2D Array
+```
+t = np.array([1, 2, 3], [4, 5, 6], [7, 8, 9], [10, 11, 12])
+[1,2,3]
+[4,5,6]
+[7,8,9]
+[10,11,12]
+
+t.ndim # rank of t: 2
+t.shape # shape of t: (4, 3)
+
+t[0] t[1] t[-1] # indexing: 1, 2, 4
+t[1:-1] # slicing: 1, 2, 3 (a:b는 a 이상 b 미만을 의미)
+t[1:] t[:3] # 2,3,4 1,2 
+```
+
+### Pytorch Tensor
+```
+t = torch.FloatTensor([0, 1, 2, 3, 4, 5])
+t2 = torch.FloatTensor([1,2,3],[4,5,6],[7,8,9],[10,11,12])
+# t[:, 1]: 첫번째 차원에서 다 가져오고 두번째 차원에서는 1번째 것 가져오
+t.dim()
+t.shape()
+t.size()
+```
+
+### Broadcasting
+matrix간의 연산 -> size가 달라도 자동으로 맞춰줌
+- 같은 크기
+- Vector + Scalar
+```
+m1 = torch.FloatTensor([1,2])
+m2 = torch.FloatTensor([3])
+m1 + m2  
+tensor(4, 5)
+# |m2| = (1,) -> (1,2)
+```
+- 다른 크기 Tensor
+```
+# 2x1 vector + 1x2 vector -> 1이 있는 차원을 자동으로 늘려줌 (1,2), (2,1)->(2,2)
+m1 = torch.FloatTensor([1,2])
+m2 = torch.FloatTensor([3],[4])
+m1 + m2
+tensor([4,5],[5,6])
+```
+
+자동으로 시행됨으로 주의해서 사용해야 함!
+
+### Multiplication
+matmul: 일반적인 행렬곱
+```
+m1.matmul(m2)
+```
+mul: shape를 맞추는 broadcasting 후 곱셈 (element 곱셈)
+```
+m1.mul(m2) # m1*m2과 같음
+```
+
+### Mean
+```
+t = torch.FloatTensor([1,2],[3,4])
+t.mean() # tensor(2.5000)
+t.mean(dim=0) # tensor([2,3]) -> 차원에 대한 평균 (첫번째 차원을 기준으로 평균 구함)
+t.mean(dim=1) # tensor([1.5000,3.5000]) 
+t.mean(dim=-1)
+```
+여기서 dim은 차원 축
+
+2차원에서 dim=0은 아래방향 (행방향), dim=1은 가로방향(열방향) (mean은 해당방향 dim이 없어짐)
+
+### Sum
+Mean과 동일 (크기로 나눠주는 차이)
+
+### Max와 Argmax
+```
+t = torch.FloatTensor([1,2],[3,4])
+t.max() # tensor(4)
+t.max(dim=1) # tensor([2,3]) (Max), tensor([1, 1]) (Argmax)
+# argmax 값을 같이 return (뒷부분은 max의 인덱스를 나타냄)
+```
